@@ -45,7 +45,7 @@ CRS_API_RESPONSE=$(curl -X POST "$CRS_API_URL" \
     -H "x-api-key: ${CRS_API_TOKEN}" \
     -d "$JSON_PAYLOAD")
 
-echo $CRS_API_RESPONSE > "crs_response_${TIMESTAMP}".json
+echo $CRS_API_RESPONSE > $OUTPUT_FILE_NAME
 
 echo "Response is saved to file: ${OUTPUT_FILE_NAME}"
 
