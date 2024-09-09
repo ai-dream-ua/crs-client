@@ -14,4 +14,4 @@ Also, the following parameters can be added:
 - `BASE_COMMIT_REF` - default `origin/master`
 - `CRS_API_URL` - `http://127.0.0.1:3000/v1/code-review/review-diff`
 - `CLIENT_TYPE` - default - `cli`, possible values - `cli`, `github-actions`
-- `OUTPUT_FILE_NAME` - default - "crs_response_${TIMESTAMP}.json"
+- `OUTPUT_FILE_NAME` - default - `crs_response_${TIMESTAMP}.json`
