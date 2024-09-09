@@ -20,6 +20,7 @@ JSON_PAYLOAD=$(jq -n \
     --arg gitdiff "$GIT_DIFF" \
     --arg title "$PR_TITLE" \
     --arg description "$PR_DESCRIPTION" \
+    --arg client "$CLIENT_TYPE" \
     '{
       diff: $gitdiff,
       details: {
@@ -28,7 +29,7 @@ JSON_PAYLOAD=$(jq -n \
           description: $description
         }
       },
-      client: "cli"
+      client: $client
     }')
 
 CRS_API_RESPONSE=$(curl -X POST "$CRS_API_URL" \
