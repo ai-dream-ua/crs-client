@@ -6,13 +6,14 @@ TIMESTAMP=$(date +%s)
 
 CURRENT_COMMIT_REF="${CURRENT_COMMIT_REF:-"HEAD"}"
 BASE_COMMIT_REF="${BASE_COMMIT_REF:-"origin/master"}"
-CRS_API_URL="${CRS_API_URL:-"http://127.0.0.1:3000/v1/code-review/review-diff"}"
+CRS_API_BASE_URL="${CRS_API_BASE_URL:-"http://127.0.0.1:3000"}"
 CLIENT_TYPE="${CLIENT_TYPE:-"cli"}"
 OUTPUT_FILE_NAME="${OUTPUT_FILE_NAME:-"crs_response_${TIMESTAMP}.json"}"
 
 if [[ "${CLIENT_TYPE}" == "github-actions" ]]
 then
-  : "${REPO_NAME?:REPO_NAME has to be specified}"
+  : "${GITHUB_ACCOUNT_NAME?:GITHUB_ACCOUNT_NAME has to be specified}"
+  : "${GITHUB_REPO_NAME?:GITHUB_REPO_NAME has to be specified}"
   : "${PR_NUMBER?:PR_NUMBER has to be specified}"
   : "${COMMIT_SHA?:COMMIT_SHA has to be specified}"
   : "${GITHUB_TOKEN?:GITHUB_TOKEN has to be specified}"
@@ -21,7 +22,7 @@ fi
 PR_TITLE="${PR_TITLE:-}"
 PR_DESCRIPTION="${PR_DESCRIPTION:-}"
 
-
+echo "Running git diff for: BASE_COMMIT_REF=$BASE_COMMIT_REF CURRENT_COMMIT_REF=$CURRENT_COMMIT_REF"
 GIT_DIFF=$(git diff $BASE_COMMIT_REF $CURRENT_COMMIT_REF)
 
 JSON_PAYLOAD=$(jq -n \
@@ -40,7 +41,7 @@ JSON_PAYLOAD=$(jq -n \
       client: $client
     }')
 
-CRS_API_RESPONSE=$(curl -X POST "$CRS_API_URL" \
+CRS_API_RESPONSE=$(curl -s -X POST "$CRS_API_BASE_URL/v1/code-review/review-diff" \
     -H "Content-Type: application/json" \
     -H "x-api-key: ${CRS_API_TOKEN}" \
     -d "$JSON_PAYLOAD")
@@ -49,6 +50,7 @@ echo $CRS_API_RESPONSE > $OUTPUT_FILE_NAME
 
 echo "Response is saved to file: ${OUTPUT_FILE_NAME}"
 
+cat $OUTPUT_FILE_NAME
 
 if [[ "${CLIENT_TYPE}" == "github-actions" ]]
 then
@@ -64,11 +66,14 @@ then
 
       echo "Adding comment on line $LINE_NUMBER in file $FILE_NAME: $COMMENT"
 
-      # Create a review comment using GitHub API
-      curl -s -H "Authorization: token $GITHUB_TOKEN" \
+      # https://docs.github.com/en/rest/pulls/comments?apiVersion=2022-11-28#create-a-review-comment-for-a-pull-request
+      curl -L \
         -X POST \
-        -d "{\"body\": \"$COMMENT\", \"commit_id\": \"$COMMIT_SHA\", \"path\": \"$FILE_NAME\", \"line\": $LINE_NUMBER, \"side\": \"RIGHT\"}" \
-        "https://api.github.com/repos/$REPO_NAME/pulls/$PR_NUMBER/comments"
-    done
+        -H "Accept: application/vnd.github+json" \
+        -H "Authorization: Bearer $GITHUB_TOKEN" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        https://api.github.com/repos/${GITHUB_ACCOUNT_NAME}/${GITHUB_REPO_NAME}/pulls/${PR_NUMBER}/comments \
+        -d "{\"body\": \"${COMMENT}\", \"commit_id\": \"$COMMIT_SHA\", \"path\": \"$FILE_NAME\", \"line\": $LINE_NUMBER, \"side\": \"RIGHT\"}"
+          done
   done
 fi
