@@ -6,7 +6,7 @@ TIMESTAMP=$(date +%s)
 
 CURRENT_COMMIT_REF="${CURRENT_COMMIT_REF:-"HEAD"}"
 BASE_COMMIT_REF="${BASE_COMMIT_REF:-"origin/master"}"
-CRS_API_BASE_URL="${CRS_API_BASE_URL:-"http://127.0.0.1:3000"}"
+CRS_API_BASE_URL="${CRS_API_BASE_URL:-"crs-api.e-post.kiev.ua:3000"}"
 CLIENT_TYPE="${CLIENT_TYPE:-"cli"}"
 OUTPUT_FILE_NAME="${OUTPUT_FILE_NAME:-"crs_response_${TIMESTAMP}.json"}"
 
