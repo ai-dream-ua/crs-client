@@ -10,9 +10,9 @@ CRS_API_TOKEN=xxx \
 ```
 
 Also, the following parameters can be added:
+- `BASE_BRANCH_NAME` - default `master`
 - `CURRENT_COMMIT_REF` - default `HEAD`
-- `BASE_COMMIT_REF` - default `origin/master`
-- `CRS_API_BASE_URL` - `http://127.0.0.1:3000`
+- `BASE_COMMIT_REF` - default `origin/${BASE_BRANCH_NAME}`
 - `CLIENT_TYPE` - default - `cli`, possible values - `cli`, `github-actions`
 - `OUTPUT_FILE_NAME` - default - `crs_response_${TIMESTAMP}.json`
 
