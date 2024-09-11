@@ -9,6 +9,7 @@ CURRENT_COMMIT_REF="${CURRENT_COMMIT_REF:-"HEAD"}"
 BASE_COMMIT_REF="${BASE_COMMIT_REF:-"origin/${BASE_BRANCH_NAME}"}"
 CRS_API_BASE_URL="${CRS_API_BASE_URL:-"crs-api.e-post.kiev.ua:3000"}"
 CLIENT_TYPE="${CLIENT_TYPE:-"cli"}"
+EXCLUDE_PATTERNS="${EXCLUDE_PATTERNS:-""}"
 OUTPUT_FILE_NAME="${OUTPUT_FILE_NAME:-"crs_response_${TIMESTAMP}.json"}"
 
 if [[ "${CLIENT_TYPE}" == "github-actions" ]]
@@ -31,8 +32,10 @@ JSON_PAYLOAD=$(jq -n \
     --arg title "$PR_TITLE" \
     --arg description "$PR_DESCRIPTION" \
     --arg client "$CLIENT_TYPE" \
+    --arg excludePatterns "$EXCLUDE_PATTERNS" \
     '{
       diff: $gitdiff,
+      excludePatterns: $excludePatterns,
       details: {
         pr: {
           title: $title,
